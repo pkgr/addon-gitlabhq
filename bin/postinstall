@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+
+. ${INSTALLER_DIR}/wizard
+
+CLI="${APP_NAME}"
+
+secret_token=$(${CLI} config:get SECRET_TOKEN || wiz_random_password 64)
+${CLI} config:set SECRET_TOKEN="$secret_token"
+
+if wiz_get "server/hostname" &>/dev/null ; then
+	server_hostname="$(wiz_get "server/hostname")"
+	server_protocol="http"
+	server_ssl="$(wiz_get "server/ssl")"
+	if [ "$server_ssl" = "yes" ] ; then
+		server_protocol="https"
+	fi
+
+	server_url="${server_protocol}://${server_hostname}"
+	${CLI} config:set GITLAB_URL="$server_url"
+fi
+
+# install gitlab shell
+${CLI} run rake gitlab:shell:install
+
+# migrate database
+${CLI} run rake db:migrate
+
+# scale
+${CLI} scale web=1 worker=1 || true
+
+# restart
+service ${APP_NAME} restart
