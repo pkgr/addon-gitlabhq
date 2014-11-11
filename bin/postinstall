@@ -22,7 +22,7 @@ if wiz_get "server/hostname" &>/dev/null ; then
 fi
 
 CONF="/etc/${APP_NAME}/gitlab.yml"
-cp ${APP_HOME}/config/gitlab.yml "$CONF"
+[ -f "$CONF" ] || cp ${APP_HOME}/config/gitlab.yml "$CONF"
 chown ${APP_USER}.${APP_GROUP} "$CONF"
 ${CLI} config:set GITLAB_CONFIG="$CONF"
 
