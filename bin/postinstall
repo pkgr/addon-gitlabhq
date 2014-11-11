@@ -32,7 +32,8 @@ ${CLI} run rake gitlab:shell:install
 find /home/${APP_USER}/gitlab-shell/{bin,hooks} -type f -exec sed -i "s|\#\!/usr/bin/env |\#\!${APP_HOME}/bin/|g" {} \;
 
 # migrate database
-${CLI} run rake db:migrate db:seed_fu
+${CLI} run rake db:migrate
+${CLI} run rake db:seed_fu
 
 # scale
 ${CLI} scale web=1 worker=1 || true
