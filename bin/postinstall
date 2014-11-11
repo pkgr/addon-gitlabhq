@@ -28,6 +28,8 @@ ${CLI} config:set GITLAB_CONFIG="$CONF"
 
 # install gitlab shell
 ${CLI} run rake gitlab:shell:install
+# force the use of embedded ruby
+find ~${APP_USER}/gitlab-shell/{bin,hooks} -type f -exec sed -i "s|\#\!/usr/bin/env |\#\!${APP_HOME}/bin/|g" {} \;
 
 # migrate database
 ${CLI} run rake db:migrate
