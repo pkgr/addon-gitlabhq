@@ -21,6 +21,11 @@ if wiz_get "server/hostname" &>/dev/null ; then
 	${CLI} config:set GITLAB_URL="$server_url"
 fi
 
+CONF="/etc/${APP_NAME}/gitlab.yml"
+cp ${APP_HOME}/config/gitlab.yml "$CONF"
+chown ${APP_USER}.${APP_GROUP} "$CONF"
+${CLI} config:set GITLAB_CONFIG="$CONF"
+
 # install gitlab shell
 ${CLI} run rake gitlab:shell:install
 
